@@ -4,12 +4,14 @@ import(
 	"fmt"
 )
 
+func worker(id int, unseenLinks <-chan string, foundLinks chan<- []string) {
+	for link := range unseenLinks {
+		crawl(id, link, foundLinks)
+	}
+}
+
 func crawl(id int, link string, foundLinks chan<- []string) {
 	fmt.Println("Worker #", id, "crawling", link)
-	links := make([]string, 3)
-	links[0] = "Link1"
-	links[1] = "Link2"
-	links[2] = "Link3"
-	fmt.Println("Worker #", id, "found", links)
+	links := extractLinks(link)
 	go func() { foundLinks <- links }()
 }
