@@ -15,17 +15,20 @@ func main() {
 		go func() {
 			for link := range unseenLinks {
 				foundLinks := crawl(link)
-				go func() { worklist <- foundLinks }()
+				worklist <- foundLinks
 			}
 		}()
 	}
 
 	// Crawl the web concurrently.
 	seen := make(map[string]bool)
-	for list := range worklist {
+
+	for n := 1; n > 0; n-- {
+		list := <-worklist
 		for _, link := range list {
 			if !seen[link] {
 				seen[link] = true
+				n++
 				unseenLinks <- link
 			}
 		}
