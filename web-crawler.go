@@ -13,32 +13,21 @@ func main() {
 
 	for i:= 0; i < 20; i++ {
 		go func() {
-			for {
-				link, ok := <-unseenLinks
-				if ok {
-					foundLinks := crawl(link)
-					worklist <- foundLinks
-				} else {
-					return
-				}
+			for link := range unseenLinks {
+				foundLinks := crawl(link)
+				go func() { worklist <- foundLinks }()
 			}
 		}()
 	}
 
 	// Crawl the web concurrently.
 	seen := make(map[string]bool)
-	for {
-		list, ok := <-worklist
-		if ok {
-			for _, link := range list {
-				if !seen[link] {
-					seen[link] = true
-					unseenLinks <- link
-				}
+	for list := range worklist {
+		for _, link := range list {
+			if !seen[link] {
+				seen[link] = true
+				unseenLinks <- link
 			}
-		} else {
-			close(worklist)
-			close(unseenLinks)
 		}
 	}
 }
