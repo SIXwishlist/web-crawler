@@ -1,39 +1,36 @@
 package main
 
 import (
-	"fmt"
 	"os"
 )
 
 func main() {
-	if len(os.Args) <= 1 {
-		fmt.Println("Please provide a website url")
-		return
+	worklist := make(chan []string)
+	unseenLinks := make(chan string)
+
+	// Start with the command-line arguments.
+	go func() { worklist <- os.Args[1:] }()
+
+	for i:= 0; i < 20; i++ {
+		go func() {
+			for link := range unseenLinks {
+				foundLinks := crawl(link)
+				worklist <- foundLinks
+			}
+		}()
 	}
 
-	rootUrl := os.Args[1]
+	// Crawl the web concurrently.
+	seen := make(map[string]bool)
 
-	visitedLinks := make(map[string]bool)
-	jobs := make(chan string)
-	foundLinks := make(chan string)
-	done := make(chan bool)
-
-	go func() { foundLinks <- rootUrl }()
-
-	
-	
-
-	fmt.Println("New link: ", link)
-	fmt.Println(visitedLinks)
-	if !visitedLinks[link] {
-		visitedLinks[link] = true
-		unvisitedLinksCount++
-		go func(link string) {
-			newLinks := crawl(link)
-			for i := 0; i < len(newLinks); i++ {
-				newLink := newLinks[i]
-				links <- newLink
+	for n := 1; n > 0; n-- {
+		list := <-worklist
+		for _, link := range list {
+			if !seen[link] {
+				seen[link] = true
+				n++
+				unseenLinks <- link
 			}
-		}(link)
+		}
 	}
 }
