@@ -4,9 +4,10 @@ import(
 	"fmt"
 )
 
-func crawl(link string) []string {
+func crawl(link string, worklist chan<- []string) {
 	fmt.Println("Crawling ", link)
-	links := make([]string, 1)
+	links := make([]string, 2)
 	links[0] = "foo"
-	return links
+	links[1] = "bar"
+	worklist <- links
 }

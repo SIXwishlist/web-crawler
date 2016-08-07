@@ -14,8 +14,7 @@ func main() {
 	for i:= 0; i < 20; i++ {
 		go func() {
 			for link := range unseenLinks {
-				foundLinks := crawl(link)
-				worklist <- foundLinks
+				crawl(link, worklist)
 			}
 		}()
 	}
