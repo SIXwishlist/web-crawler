@@ -14,21 +14,26 @@ func main() {
 	rootUrl := os.Args[1]
 
 	visitedLinks := make(map[string]bool)
-	links := make(chan string, 100)
+	jobs := make(chan string)
+	foundLinks := make(chan string)
+	done := make(chan bool)
 
-	go func() { links <- rootUrl }()
+	go func() { foundLinks <- rootUrl }()
 
-	for link := range links {
-		fmt.Println("Link to visit: ", link)
-		if !visitedLinks[link] {
-			visitedLinks[link] = true
-			go func(link string) {
-				newLinks := crawl(link)
-				for i := 0; i < len(newLinks); i++ {
-					newLink := newLinks[i]
-					fmt.Println("newLink: ", newLink)
-				}
-			}(link)
-		}
+	
+	
+
+	fmt.Println("New link: ", link)
+	fmt.Println(visitedLinks)
+	if !visitedLinks[link] {
+		visitedLinks[link] = true
+		unvisitedLinksCount++
+		go func(link string) {
+			newLinks := crawl(link)
+			for i := 0; i < len(newLinks); i++ {
+				newLink := newLinks[i]
+				links <- newLink
+			}
+		}(link)
 	}
 }

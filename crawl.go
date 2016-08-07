@@ -4,9 +4,16 @@ import(
 	"fmt"
 )
 
-func crawl(link string) []string {
-	fmt.Println("Crawling")
-	links := make([]string, 1)
-	links[0] = "foo"
-	return links
+func crawl(jobs <-chan string, done <-chan bool, foundLinks chan<- string) {
+	for {
+		select {
+		case job := <-jobs:
+			foundLinks <- "foo"
+			foundLinks <- "bar"
+			foundLinks <- "baz"
+		case flag := <-done:
+			fmt.Println("Terminating")
+			return
+		}
+	}
 }
