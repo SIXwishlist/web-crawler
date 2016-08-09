@@ -6,12 +6,16 @@ import(
 
 func worker(id int, unseenLinks <-chan string, foundLinks chan<- []string) {
 	for link := range unseenLinks {
-		crawl(id, link, foundLinks)
+		fmt.Println("Worker #", id, "crawling", link)
+
+		links := extractLinks(link, fetcher{})
+
+		go func() { foundLinks <- links }()
 	}
 }
 
-func crawl(id int, link string, foundLinks chan<- []string) {
-	fmt.Println("Worker #", id, "crawling", link)
-	links := extractLinks(link)
-	go func() { foundLinks <- links }()
+func extractLinks(link string, fetcher Fetcher) []string {
+	body := fetcher.Fetch(link)
+	links := body.ExtractLinks()
+	return links
 }
