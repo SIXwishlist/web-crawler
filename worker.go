@@ -19,6 +19,7 @@ func extractLinks(link string, fetcher Fetcher) (links []string) {
 	if err != nil {
 		return
 	}
+	fmt.Println("Fetched page", link)
 	doc := htmlDoc{body: body}
 	links = doc.ExtractLinks()
 	return

@@ -25,13 +25,13 @@ func (this fetcher) Fetch(url string) (string, error) {
 	}
 
 	response, err := client.Get(url)
-	defer response.Body.Close()
 
 	if err != nil {
 		return "", fmt.Errorf("Error fetching %s: %s", url, err)
 	}
 
 	body, err := ioutil.ReadAll(response.Body)
+	response.Body.Close()
 	if err != nil {
 		return "", fmt.Errorf("Error reading %s: %s", url, err)
 	}
