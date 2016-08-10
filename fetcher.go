@@ -3,10 +3,11 @@ package main
 import (
 	"fmt"
 	"net/http"
+	"io/ioutil"
 )
 
 type Fetcher interface {
-	Fetch(url string) (body HtmlDoc, err error)
+	Fetch(url string) (body string, err error)
 }
 
 type Client interface {
@@ -17,13 +18,23 @@ type fetcher struct {
 	client Client
 }
 
-func (this fetcher) Fetch(url string) (doc HtmlDoc, err error) {
+func (this fetcher) Fetch(url string) (string, error) {
+	client := this.client
+	if client == nil {
+		client = &http.Client{}
+	}
+
 	response, err := this.client.Get(url)
 	defer response.Body.Close()
 
 	if err != nil {
-		return nil, fmt.Errorf("Error fetching %s: %s", url, err)
+		return "", fmt.Errorf("Error fetching %s: %s", url, err)
 	}
 
-	return htmlDoc{body: response.Body}, nil
+	body, err = ioutil.ReadAll(response.Body)
+	if err != nil {
+		return "", fmt.Errorf("Error reading %s: %s", url, err)
+	}
+
+	return string(body[0:response.ContentLength]), nil
 }

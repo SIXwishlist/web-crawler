@@ -1,14 +1,12 @@
 package main
 
-import "io"
-
 type HtmlDoc interface {
 	ExtractLinks() []string
 	ReadBody() string
 }
 
 type htmlDoc struct {
-	body io.ReadCloser
+	body string
 }
 
 func (document htmlDoc) ReadBody() string {
