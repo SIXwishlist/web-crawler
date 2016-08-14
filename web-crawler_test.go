@@ -24,7 +24,18 @@ func TestWebCrawler(t *testing.T) {
 	startWorkers(workers, testWorker, unseenLinks, foundLinks)
 	dispatchLinks(startingUrl, foundLinks, unseenLinks, seen)
 
-	if len(seen) < 4 {
-		t.Error("Not all links have been traversed")
+	links := []string{startingUrl, "Link1", "Link2", "Link3"}
+	for _, link := range links {
+		found := false
+
+		for seenLink, _ := range seen {
+			if link == seenLink {
+				found = true
+			}
+		}
+
+		if !found {
+			t.Error(link, "has not been crawled")
+		}
 	}
 }
