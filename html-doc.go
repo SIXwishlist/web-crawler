@@ -9,20 +9,27 @@ import (
 var domainRegex = regexp.MustCompile(`https?:\/\/([\w\d])+(\.\w+)*`)
 
 type HtmlDoc interface {
-	ExtractInternalLinks() []string
+	ExtractPageInfo() pageInfo
 }
 
 type htmlDoc struct {
 	body string
 	domain string
+	address string
 }
 
 type HtmlDocConstructor func(string, string) HtmlDoc
 
+type pageInfo struct {
+	page string
+	links []string
+	assets []string
+}
+
 func NewHtmlDoc(body string, address string) HtmlDoc {
 	domain := domainRegex.FindString(address)
 
-	return htmlDoc{body: body, domain: domain}
+	return htmlDoc{body: body, domain: domain, address: address}
 }
 
 func selectLinks(n *html.Node, buf []string) []string {
@@ -66,17 +73,27 @@ func removeDuplicates(links []string) (uniqueLinks []string) {
 	return
 }
 
-func (this htmlDoc) ExtractInternalLinks() []string {
-	var links []string
-
+func (this htmlDoc) ExtractPageInfo() (info pageInfo) {
 	doc, err := html.Parse(strings.NewReader(this.body))
 	if err != nil {
-		return nil
+		return pageInfo{}
 	}
 
+	info.page = this.address
+	info.links = this.extractInternalLinks(doc)
+	info.assets = this.extractAssets(doc)
+
+	return
+}
+
+func (this htmlDoc) extractInternalLinks(doc *html.Node) (links []string) {
 	links = selectLinks(doc, links)
 	links = filterInternalLinks(links, this.domain)
 	links = removeDuplicates(links)
 
-	return links
+	return
+}
+
+func (this htmlDoc) extractAssets(doc *html.Node) (assets []string) {
+	
 }

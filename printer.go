@@ -4,12 +4,7 @@ import (
 	"io"
 )
 
-type pageResult struct {
-	page string
-	links []string
-}
-
-func Printer(output io.Writer, results <-chan pageResult) {
+func Printer(output io.Writer, results <-chan pageInfo) {
 	for result := range results {
 		io.WriteString(output, "Page: " + result.page + "\n")
 		io.WriteString(output, "  Links:\n")

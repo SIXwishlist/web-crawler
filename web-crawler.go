@@ -6,7 +6,7 @@ import (
 	"io"
 )
 
-func startWorkers(workers int, newWorker WorkerConstructor, unseenLinks <-chan string, foundLinks chan<- []string, results chan<- pageResult) {
+func startWorkers(workers int, newWorker WorkerConstructor, unseenLinks <-chan string, foundLinks chan<- []string, results chan<- pageInfo) {
 	for i:= 0; i < workers; i++ {
 		worker := newWorker()
 		go worker.Start(i, unseenLinks, foundLinks, results)
@@ -27,7 +27,7 @@ func dispatchLinks(startingUrl string, foundLinks chan []string, unseenLinks cha
 	}
 }
 
-func startPrinter(output io.Writer, results <-chan pageResult) {
+func startPrinter(output io.Writer, results <-chan pageInfo) {
 	go Printer(output, results)
 }
 
@@ -40,7 +40,7 @@ func main() {
 	var (
 		foundLinks = make(chan []string)
 		unseenLinks = make(chan string)
-		results = make(chan pageResult)
+		results = make(chan pageInfo)
 		seen = make(map[string]bool)
 	)
 

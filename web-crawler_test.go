@@ -48,7 +48,7 @@ func TestWebCrawler(t *testing.T) {
 		workers = 2
 		foundLinks = make(chan []string)
 		unseenLinks = make(chan string)
-		results = make(chan pageResult)
+		results = make(chan pageInfo)
 		seen = make(map[string]bool)
 		output = testOutput{}
 	)

@@ -14,17 +14,17 @@ func newTestHtmlDoc(body string, address string) HtmlDoc {
 	return testHtmlDoc{}
 }
 
-func (this testHtmlDoc) ExtractInternalLinks() []string {
-	return []string{"Link1", "Link2", "Link3"}
+func (this testHtmlDoc) ExtractPageInfo() pageInfo {
+	return pageInfo{page: "http://tomblomfield.com", links: []string{"Link1", "Link2", "Link3"}}
 }
 
 func TestExtractLinks(t *testing.T) {
 	worker := Worker{fetcher: testFetcherWorker{}, newHtmlDoc: newTestHtmlDoc}
 
 	expectedLinks := []string{"Link1", "Link2", "Link3"}
-	links := worker.extractLinks("http://tomblomfield.com")
+	info := worker.extractPageInfo("http://tomblomfield.com")
 
-	if !equalStringSlices(links, expectedLinks) {
-		t.Error("Expected links:", expectedLinks, "actual links", links)
+	if !equalStringSlices(expectedLinks, info.links) {
+		t.Error("Expected links:", expectedLinks, "actual links", info.links)
 	}
 }
