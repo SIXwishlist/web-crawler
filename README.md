@@ -4,18 +4,18 @@ Crawls a domain printing out the site map with static assets for each page and l
 
 ## How to use
 
-TODO
+Clone this repo and run `go install`. Run `$GOPATH/web-crawler -u <URL> -w <NO. OF WORKERS>`
 
 ## How to run tests
 
-TODO
+Clone this repo and run `go test`.
 
 ## Requirements
 
 - Number of workers is specified in a command line flag
 
 ```
-web-crawler -u google.com -w 20
+web-crawler -u http://tomblomfield.com -w 20
 ```
 
 - Only crawls the links within the given domain

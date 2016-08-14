@@ -2,8 +2,8 @@ package main
 
 import (
 	"golang.org/x/net/html"
-	"strings"
 	"regexp"
+	"strings"
 )
 
 var domainRegex = regexp.MustCompile(`https?:\/\/([\w\d])+(\.\w+)*`)
@@ -13,16 +13,16 @@ type HtmlDoc interface {
 }
 
 type htmlDoc struct {
-	body string
-	domain string
+	body    string
+	domain  string
 	address string
 }
 
 type HtmlDocConstructor func(string, string) HtmlDoc
 
 type pageInfo struct {
-	page string
-	links []string
+	page   string
+	links  []string
 	assets []string
 }
 
