@@ -44,13 +44,20 @@ func selectLinks(n *html.Node, buf []string) []string {
 }
 
 func filterInternalLinks(links []string, domain string) (internalLinks []string) {
+	uniqueInternalLinks := make(map[string]bool)
+
 	for _, link := range links {
 		if strings.HasPrefix(link, domain) {
-			internalLinks = append(internalLinks, link)
+			uniqueInternalLinks[link] = true
 		} else if strings.HasPrefix(link, "/") {
-			internalLinks = append(internalLinks, domain + link)
+			uniqueInternalLinks[domain+link] = true
 		}
 	}
+
+	for link, _ := range uniqueInternalLinks {
+		internalLinks = append(internalLinks, link)
+	}
+
 	return
 }
 

@@ -8,6 +8,7 @@ var (
 	<body>
 		<a href='http://tomblomfield.com/1'>1</a>
 		<a href='http://tomblomfield.com/2'>2</a>
+		<a href='http://tomblomfield.com/2'>2</a>
 		<a href='http://google.com'>Google</a>
 		<a href='/page3'>3</a>
 	</body>
@@ -20,7 +21,15 @@ func equalStringSlices(s1, s2 []string) bool {
 	}
 
 	for i := range s1 {
-		if s1[i] != s2[i] {
+		found := false
+
+		for j := range s2 {
+			if s1[i] == s2[j] {
+				found = true
+			}
+		}
+
+		if !found {
 			return false
 		}
 	}
