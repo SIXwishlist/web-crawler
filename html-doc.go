@@ -44,18 +44,25 @@ func selectLinks(n *html.Node, buf []string) []string {
 }
 
 func filterInternalLinks(links []string, domain string) (internalLinks []string) {
-	uniqueInternalLinks := make(map[string]bool)
-
 	for _, link := range links {
 		if strings.HasPrefix(link, domain) {
-			uniqueInternalLinks[link] = true
+			internalLinks = append(internalLinks, link)
 		} else if strings.HasPrefix(link, "/") {
-			uniqueInternalLinks[domain+link] = true
+			internalLinks = append(internalLinks, domain+link)
 		}
 	}
+	return
+}
 
-	for link, _ := range uniqueInternalLinks {
-		internalLinks = append(internalLinks, link)
+func removeDuplicates(links []string) (uniqueLinks []string) {
+	linksMap := make(map[string]bool)
+
+	for _, link := range links {
+		linksMap[link] = true
+	}
+
+	for link, _ := range linksMap {
+		uniqueLinks = append(uniqueLinks, link)
 	}
 
 	return
@@ -71,6 +78,7 @@ func (this htmlDoc) ExtractInternalLinks() []string {
 
 	links = selectLinks(doc, links)
 	links = filterInternalLinks(links, this.domain)
+	links = removeDuplicates(links)
 
 	return links
 }
