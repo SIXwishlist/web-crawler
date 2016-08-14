@@ -10,6 +10,7 @@ var (
 		<a href='http://tomblomfield.com/2'>2</a>
 		<a href='http://tomblomfield.com/2'>2</a>
 		<a href='http://google.com'>Google</a>
+		<a href='http://google.com/'>Google</a>
 		<a href='/page3'>3</a>
 	</body>
 </html>`

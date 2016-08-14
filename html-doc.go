@@ -58,6 +58,7 @@ func removeDuplicates(links []string) (uniqueLinks []string) {
 	linksMap := make(map[string]bool)
 
 	for _, link := range links {
+		link = strings.TrimSuffix(link, "/")
 		linksMap[link] = true
 	}
 
