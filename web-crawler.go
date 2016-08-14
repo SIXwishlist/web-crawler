@@ -4,11 +4,10 @@ import (
 	"flag"
 )
 
-type workerFn func(int, <-chan string, chan<- []string)
-
-func startWorkers(workers int, worker workerFn, unseenLinks <-chan string, foundLinks chan<- []string) {
+func startWorkers(workers int, newWorker WorkerConstructor, unseenLinks <-chan string, foundLinks chan<- []string) {
 	for i:= 0; i < workers; i++ {
-		go worker(i, unseenLinks, foundLinks)
+		worker := newWorker()
+		go worker.Start(i, unseenLinks, foundLinks)
 	}
 }
 
@@ -40,6 +39,6 @@ func main() {
 
 	flag.Parse()
 
-	startWorkers(*workers, worker, unseenLinks, foundLinks)
+	startWorkers(*workers, NewWorker, unseenLinks, foundLinks)
 	dispatchLinks(*startingUrl, foundLinks, unseenLinks, seen)
 }

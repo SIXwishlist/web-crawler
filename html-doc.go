@@ -10,7 +10,6 @@ var domainRegex = regexp.MustCompile(`https?:\/\/([\w\d])+(\.\w+)*`)
 
 type HtmlDoc interface {
 	ExtractInternalLinks() []string
-	ReadBody() string
 }
 
 type htmlDoc struct {
@@ -18,14 +17,12 @@ type htmlDoc struct {
 	domain string
 }
 
-func NewHtmlDoc(body string, address string) *htmlDoc {
+type HtmlDocConstructor func(string, string) HtmlDoc
+
+func NewHtmlDoc(body string, address string) HtmlDoc {
 	domain := domainRegex.FindString(address)
 
-	return &htmlDoc{body: body, domain: domain}
-}
-
-func (this htmlDoc) ReadBody() string {
-	return "<html></html>"
+	return htmlDoc{body: body, domain: domain}
 }
 
 func selectLinks(n *html.Node, buf []string) []string {

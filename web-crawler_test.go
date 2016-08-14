@@ -2,14 +2,24 @@ package main
 
 import "testing"
 
-func testWorker(id int, unseenLinks <-chan string, foundLinks chan<- []string) {
-	for _ = range unseenLinks {
-		links := make([]string, 3)
-		links[0] = "Link1"
-		links[1] = "Link2"
-		links[2] = "Link3"
-		go func() { foundLinks <- links }()
-	}
+type testFetcher struct {}
+
+func (this testFetcher) Fetch(url string) (string, error) {
+	return "", nil
+}
+
+type testHtmlDoc struct {}
+
+func newTestHtmlDoc(body string, address string) HtmlDoc {
+	return testHtmlDoc{}
+}
+
+func (this testHtmlDoc) ExtractInternalLinks() []string {
+	return []string{"Link1","Link2", "Link3"}
+}
+
+func newTestWorker() *Worker {
+	return &Worker{fetcher: testFetcher{}, newHtmlDoc: newTestHtmlDoc}
 }
 
 func TestWebCrawler(t *testing.T) {
@@ -21,7 +31,7 @@ func TestWebCrawler(t *testing.T) {
 		seen = make(map[string]bool)
 	)
 
-	startWorkers(workers, testWorker, unseenLinks, foundLinks)
+	startWorkers(workers, newTestWorker, unseenLinks, foundLinks)
 	dispatchLinks(startingUrl, foundLinks, unseenLinks, seen)
 
 	links := []string{startingUrl, "Link1", "Link2", "Link3"}

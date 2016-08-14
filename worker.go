@@ -4,21 +4,32 @@ import(
 	"fmt"
 )
 
-func worker(id int, unseenLinks <-chan string, foundLinks chan<- []string) {
+type Worker struct {
+	fetcher Fetcher
+	newHtmlDoc HtmlDocConstructor
+}
+
+type WorkerConstructor func() *Worker
+
+func NewWorker() *Worker {
+	return &Worker{fetcher: fetcher{}, newHtmlDoc: NewHtmlDoc}
+}
+
+func (this Worker) Start(id int, unseenLinks <-chan string, foundLinks chan<- []string) {
 	for link := range unseenLinks {
-		links := extractLinks(link, fetcher{})
+		fmt.Println("Worker ", id, "crawling", link)
+		links := this.extractLinks(link)
 
 		go func() { foundLinks <- links }()
 	}
 }
 
-func extractLinks(link string, fetcher Fetcher) (links []string) {
-	body, err := fetcher.Fetch(link)
+func (this Worker) extractLinks(link string) (links []string) {
+	body, err := this.fetcher.Fetch(link)
 	if err != nil {
 		return
 	}
-	fmt.Println("Page:", link)
-	doc := NewHtmlDoc(body, link)
+	doc := this.newHtmlDoc(body, link)
 	links = doc.ExtractInternalLinks()
 	printLinks(links)
 	return
