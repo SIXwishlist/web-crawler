@@ -72,14 +72,13 @@ func TestWebCrawler(t *testing.T) {
 		}
 	}
 
-	expectedOutput := `
-Page: http://tomblomfield.com
-  Assets:
-    - http://www.google-analytics.com/ga.js
+	expectedOutput := `Page: http://tomblomfield.com/
   Links:
     - http://tomblomfield.com/1
     - http://tomblomfield.com/2
-    - http://tomblomfield.com/page3`
+    - http://tomblomfield.com/page3
+  Assets:
+    - http://www.google-analytics.com/ga.js`
 
 	if !strings.Contains(receivedOutput, expectedOutput) {
 		t.Error("\n" + receivedOutput + "\n", "doesn't contain:", "\n" + expectedOutput)

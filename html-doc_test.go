@@ -45,7 +45,7 @@ func equalStringSlices(s1, s2 []string) bool {
 func TestExtractPageInfo(t *testing.T) {
 	doc := htmlDoc{body: bodyHtml, domain: "http://tomblomfield.com", address: "http://tomblomfield.com"}
 	info := doc.ExtractPageInfo()
-	expectedPageInfo := pageInfo{page: "http://tomblomfield.com", links: []string{"http://tomblomfield.com/1","http://tomblomfield.com/2", "http://tomblomfield.com/page3"}, assets: []string{"http://www.google-analytics.com/ga.js", "puppy.jpeg"}}
+	expectedPageInfo := pageInfo{page: "http://tomblomfield.com", links: []string{"http://tomblomfield.com/1","http://tomblomfield.com/2", "http://tomblomfield.com/page3"}, assets: []string{"http://www.google-analytics.com/ga.js", "/puppy.jpeg"}}
 
 
 	if !equalStringSlices(expectedPageInfo.links, info.links) {

@@ -47,6 +47,21 @@ func selectLinks(n *html.Node, buf []string) []string {
 	return buf
 }
 
+func selectAssets(n *html.Node, buf []string) []string {
+	if n.Type == html.ElementNode && (n.Data == "script" || n.Data == "img") {
+		for _, attr := range n.Attr {
+			if attr.Key == "src" {
+				buf = append(buf, attr.Val)
+			}
+		}
+	}
+
+	for c := n.FirstChild; c != nil; c = c.NextSibling {
+		buf = selectAssets(c, buf)
+	}
+	return buf
+}
+
 func filterInternalLinks(links []string, domain string) (internalLinks []string) {
 	for _, link := range links {
 		if strings.HasPrefix(link, domain) {
@@ -95,5 +110,5 @@ func (this htmlDoc) extractInternalLinks(doc *html.Node) (links []string) {
 }
 
 func (this htmlDoc) extractAssets(doc *html.Node) (assets []string) {
-	
+	return selectAssets(doc, assets)
 }
