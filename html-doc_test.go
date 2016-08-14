@@ -9,6 +9,7 @@ var (
 		<a href='http://tomblomfield.com/1'>1</a>
 		<a href='http://tomblomfield.com/2'>2</a>
 		<a href='http://google.com'>Google</a>
+		<a href='/page3'>3</a>
 	</body>
 </html>`
 )
@@ -30,7 +31,7 @@ func equalStringSlices(s1, s2 []string) bool {
 func TestExtractInternalLinks(t *testing.T) {
 	doc := htmlDoc{body: bodyHtml, domain: "http://tomblomfield.com"}
 	links := doc.ExtractInternalLinks()
-	expectedLinks := []string{"http://tomblomfield.com/1","http://tomblomfield.com/2"}
+	expectedLinks := []string{"http://tomblomfield.com/1","http://tomblomfield.com/2", "http://tomblomfield.com/page3"}
 
 	if !equalStringSlices(expectedLinks, links) {
 		t.Error("Expected links:", expectedLinks, "actual links", links)

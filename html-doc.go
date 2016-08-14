@@ -6,6 +6,8 @@ import (
 	"regexp"
 )
 
+var domainRegex = regexp.MustCompile(`https?:\/\/([\w\d])+(\.\w+)*`)
+
 type HtmlDoc interface {
 	ExtractInternalLinks() []string
 	ReadBody() string
@@ -17,7 +19,6 @@ type htmlDoc struct {
 }
 
 func NewHtmlDoc(body string, address string) *htmlDoc {
-	domainRegex := regexp.MustCompile(`https?:\/\/([\w\d])+(\.\w+)*`)
 	domain := domainRegex.FindString(address)
 
 	return &htmlDoc{body: body, domain: domain}
@@ -46,6 +47,8 @@ func filterInternalLinks(links []string, domain string) (internalLinks []string)
 	for _, link := range links {
 		if strings.HasPrefix(link, domain) {
 			internalLinks = append(internalLinks, link)
+		} else if strings.HasPrefix(link, "/") {
+			internalLinks = append(internalLinks, domain + link)
 		}
 	}
 	return
