@@ -5,21 +5,21 @@ import "testing"
 type testFetcher struct {}
 
 func (this testFetcher) Fetch(url string) (string, error) {
-	return "", nil
-}
-
-type testHtmlDoc struct {}
-
-func newTestHtmlDoc(body string, address string) HtmlDoc {
-	return testHtmlDoc{}
-}
-
-func (this testHtmlDoc) ExtractInternalLinks() []string {
-	return []string{"Link1","Link2", "Link3"}
+	return `
+<html>
+	<body>
+		<a href='http://tomblomfield.com/1'>1</a>
+		<a href='http://tomblomfield.com/2'>2</a>
+		<a href='http://tomblomfield.com/2'>2</a>
+		<a href='http://google.com'>Google</a>
+		<a href='http://google.com/'>Google</a>
+		<a href='/page3'>3</a>
+	</body>
+</html>`, nil
 }
 
 func newTestWorker() *Worker {
-	return &Worker{fetcher: testFetcher{}, newHtmlDoc: newTestHtmlDoc}
+	return &Worker{fetcher: testFetcher{}, newHtmlDoc: NewHtmlDoc}
 }
 
 func TestWebCrawler(t *testing.T) {
@@ -34,7 +34,7 @@ func TestWebCrawler(t *testing.T) {
 	startWorkers(workers, newTestWorker, unseenLinks, foundLinks)
 	dispatchLinks(startingUrl, foundLinks, unseenLinks, seen)
 
-	links := []string{startingUrl, "Link1", "Link2", "Link3"}
+	links := []string{"http://tomblomfield.com/1","http://tomblomfield.com/2", "http://tomblomfield.com/page3"}
 	for _, link := range links {
 		found := false
 

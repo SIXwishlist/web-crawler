@@ -1,11 +1,11 @@
 package main
 
-import(
+import (
 	"fmt"
 )
 
 type Worker struct {
-	fetcher Fetcher
+	fetcher    Fetcher
 	newHtmlDoc HtmlDocConstructor
 }
 
