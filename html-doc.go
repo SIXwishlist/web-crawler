@@ -1,18 +1,26 @@
 package main
 
 import (
-	"fmt"
 	"golang.org/x/net/html"
 	"strings"
+	"regexp"
 )
 
 type HtmlDoc interface {
-	ExtractLinks() []string
+	ExtractInternalLinks() []string
 	ReadBody() string
 }
 
 type htmlDoc struct {
 	body string
+	domain string
+}
+
+func NewHtmlDoc(body string, address string) *htmlDoc {
+	domainRegex := regexp.MustCompile(`https?:\/\/([\w\d])+(\.\w+)*`)
+	domain := domainRegex.FindString(address)
+
+	return &htmlDoc{body: body, domain: domain}
 }
 
 func (this htmlDoc) ReadBody() string {
@@ -20,11 +28,9 @@ func (this htmlDoc) ReadBody() string {
 }
 
 func selectLinks(n *html.Node, buf []string) []string {
-	fmt.Println(n.Data)
 	if n.Type == html.ElementNode && n.Data == "a" {
 		for _, attr := range n.Attr {
 			if attr.Key == "href" {
-				fmt.Println(attr.Val)
 				buf = append(buf, attr.Val)
 			}
 		}
@@ -36,7 +42,16 @@ func selectLinks(n *html.Node, buf []string) []string {
 	return buf
 }
 
-func (this htmlDoc) ExtractLinks() []string {
+func filterInternalLinks(links []string, domain string) (internalLinks []string) {
+	for _, link := range links {
+		if strings.HasPrefix(link, domain) {
+			internalLinks = append(internalLinks, link)
+		}
+	}
+	return
+}
+
+func (this htmlDoc) ExtractInternalLinks() []string {
 	var links []string
 
 	doc, err := html.Parse(strings.NewReader(this.body))
@@ -45,6 +60,7 @@ func (this htmlDoc) ExtractLinks() []string {
 	}
 
 	links = selectLinks(doc, links)
+	links = filterInternalLinks(links, this.domain)
 
 	return links
 }

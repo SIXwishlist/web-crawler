@@ -27,10 +27,10 @@ func equalStringSlices(s1, s2 []string) bool {
 	return true
 }
 
-func TestExtractLinks(t *testing.T) {
-	doc := htmlDoc{body: bodyHtml}
-	links := doc.ExtractLinks()
-	expectedLinks := []string{"http://tomblomfield.com/1","http://tomblomfield.com/2","http://google.com"}
+func TestExtractInternalLinks(t *testing.T) {
+	doc := htmlDoc{body: bodyHtml, domain: "http://tomblomfield.com"}
+	links := doc.ExtractInternalLinks()
+	expectedLinks := []string{"http://tomblomfield.com/1","http://tomblomfield.com/2"}
 
 	if !equalStringSlices(expectedLinks, links) {
 		t.Error("Expected links:", expectedLinks, "actual links", links)
