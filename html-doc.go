@@ -32,33 +32,29 @@ func NewHtmlDoc(body string, address string) HtmlDoc {
 	return htmlDoc{body: body, domain: domain, address: address}
 }
 
-func selectLinks(n *html.Node, buf []string) []string {
-	if n.Type == html.ElementNode && n.Data == "a" {
-		for _, attr := range n.Attr {
-			if attr.Key == "href" {
-				buf = append(buf, attr.Val)
-			}
-		}
-	}
+type Condition func(*html.Node) bool
 
-	for c := n.FirstChild; c != nil; c = c.NextSibling {
-		buf = selectLinks(c, buf)
-	}
-	return buf
+func isLink(n *html.Node) bool {
+	return n.Type == html.ElementNode && n.Data == "a"
 }
 
-func selectAssets(n *html.Node, buf []string) []string {
-	if n.Type == html.ElementNode && (n.Data == "script" || n.Data == "img") {
+func isAsset(n *html.Node) bool {
+	return n.Type == html.ElementNode && (n.Data == "script" || n.Data == "img")
+}
+
+func selectNodes(n *html.Node, buf []string, cond Condition, key string) []string {
+	if cond(n) {
 		for _, attr := range n.Attr {
-			if attr.Key == "src" {
+			if attr.Key == key {
 				buf = append(buf, attr.Val)
 			}
 		}
 	}
 
 	for c := n.FirstChild; c != nil; c = c.NextSibling {
-		buf = selectAssets(c, buf)
+		buf = selectNodes(c, buf, cond, key)
 	}
+
 	return buf
 }
 
@@ -102,7 +98,7 @@ func (this htmlDoc) ExtractPageInfo() (info pageInfo) {
 }
 
 func (this htmlDoc) extractInternalLinks(doc *html.Node) (links []string) {
-	links = selectLinks(doc, links)
+	links = selectNodes(doc, links, isLink, "href")
 	links = filterInternalLinks(links, this.domain)
 	links = removeDuplicates(links)
 
@@ -110,5 +106,5 @@ func (this htmlDoc) extractInternalLinks(doc *html.Node) (links []string) {
 }
 
 func (this htmlDoc) extractAssets(doc *html.Node) (assets []string) {
-	return selectAssets(doc, assets)
+	return selectNodes(doc, assets, isAsset, "src")
 }
