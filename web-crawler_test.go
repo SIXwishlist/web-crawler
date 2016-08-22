@@ -1,10 +1,10 @@
 package main
 
-import(
-	"testing"
-	"strings"
-	"os"
+import (
 	"io/ioutil"
+	"os"
+	"strings"
+	"testing"
 )
 
 func TestWebCrawler(t *testing.T) {
@@ -50,7 +50,7 @@ func TestWebCrawler(t *testing.T) {
 
 	var expectedLinks []string
 	for i := 0; i < len(links); i++ {
-		expectedLinks = append(expectedLinks, "    - " + links[i])
+		expectedLinks = append(expectedLinks, "    - "+links[i])
 	}
 	if !equalStringSlices(outputLinks, expectedLinks) {
 		t.Error(outputLinks, "doesn't contain:", expectedLinks)

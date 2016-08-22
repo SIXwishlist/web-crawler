@@ -10,7 +10,7 @@ var (
 	unseenLinks = make(chan string)
 	results     = make(chan pageInfo)
 	seen        = make(map[string]bool)
-	output			= os.Stdout
+	output      = os.Stdout
 	workers     = flag.Int("w", 1, "Number of concurrent workers to perform requests")
 	startingUrl = flag.String("u", "", "Starting URL")
 )

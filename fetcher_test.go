@@ -1,16 +1,16 @@
 package main
 
-import(
-	"testing"
-	"net/http"
+import (
 	"io"
+	"net/http"
+	"testing"
 )
 
 var (
 	body = []byte("<html></html>")
 )
 
-type testClient struct {}
+type testClient struct{}
 
 type ResponseBody struct {
 }
