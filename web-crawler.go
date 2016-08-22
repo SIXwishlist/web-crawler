@@ -32,21 +32,19 @@ func startPrinter(output io.Writer, results <-chan pageInfo) {
 }
 
 var (
+	foundLinks  = make(chan []string)
+	unseenLinks = make(chan string)
+	results     = make(chan pageInfo)
+	seen        = make(map[string]bool)
+	output			= os.Stdout
 	workers     = flag.Int("w", 1, "Number of concurrent workers to perform requests")
 	startingUrl = flag.String("u", "", "Starting URL")
 )
 
 func main() {
-	var (
-		foundLinks  = make(chan []string)
-		unseenLinks = make(chan string)
-		results     = make(chan pageInfo)
-		seen        = make(map[string]bool)
-	)
-
 	flag.Parse()
 
 	startWorkers(*workers, NewWorker, unseenLinks, foundLinks, results)
-	startPrinter(os.Stdout, results)
+	startPrinter(output, results)
 	dispatchLinks(*startingUrl, foundLinks, unseenLinks, seen)
 }
