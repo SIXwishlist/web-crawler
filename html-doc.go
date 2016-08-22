@@ -6,7 +6,7 @@ import (
 	"strings"
 )
 
-var domainRegex = regexp.MustCompile(`https?:\/\/([\w\d])+(\.\w+)*:\d{1,5}`)
+var domainRegex = regexp.MustCompile(`https?:\/\/([\w\d])+(\.\w+)*(:\d{0,5})*`)
 
 type HtmlDoc interface {
 	ExtractPageInfo() pageInfo

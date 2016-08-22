@@ -14,7 +14,8 @@ func TestWebCrawler(t *testing.T) {
 
 	main()
 
-	links := []string{"http://localhost:8080/1","http://localhost:8080/2", "http://localhost:8080/page3"}
+	links := []string{"http://localhost:8080/1", "http://localhost:8080/2", "http://localhost:8080/page3"}
+
 	for _, link := range links {
 		found := false
 
@@ -29,16 +30,29 @@ func TestWebCrawler(t *testing.T) {
 		}
 	}
 
-	expectedOutput := `Page: http://localhost:8080/
-  Links:
-    - http://localhost:8080/1
-    - http://localhost:8080/2
-    - http://localhost:8080/page3
-  Assets:
-    - http://www.google-analytics.com/ga.js`
-
 	receivedOutput, _ := ioutil.ReadFile("test_output")
-	if !strings.Contains(string(receivedOutput), expectedOutput) {
-		t.Error("\n" + string(receivedOutput) + "\n", "doesn't contain:", "\n" + expectedOutput)
+
+	lines := strings.Split(string(receivedOutput), "\n")
+	var outputLinks []string
+	foundPage := false
+
+	for i := 0; i < len(lines); i++ {
+		if lines[i] == "Page: http://localhost:8080/" {
+			for j := 2; j < 5; j++ {
+				outputLinks = append(outputLinks, lines[i+j])
+			}
+			foundPage = true
+		}
+	}
+	if !foundPage {
+		t.Error("http://localhost:8080/ has not been crawled")
+	}
+
+	var expectedLinks []string
+	for i := 0; i < len(links); i++ {
+		expectedLinks = append(expectedLinks, "    - " + links[i])
+	}
+	if !equalStringSlices(outputLinks, expectedLinks) {
+		t.Error(outputLinks, "doesn't contain:", expectedLinks)
 	}
 }

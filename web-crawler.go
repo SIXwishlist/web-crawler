@@ -25,7 +25,7 @@ func main() {
 
 	go Printer(output, results)
 
-	go func() { foundLinks <- []string{startingUrl} }()
+	go func() { foundLinks <- []string{*startingUrl} }()
 	for n := 1; n > 0; n-- {
 		list := <-foundLinks
 		for _, link := range list {
