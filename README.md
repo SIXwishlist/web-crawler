@@ -8,6 +8,8 @@ Clone this repo and run `go install`. Run `$GOPATH/web-crawler -u <URL> -w <NO. 
 
 ## How to run tests
 
+Start a test web server with `go run test_server.go`
+
 Clone this repo and run `go test`.
 
 ## Requirements
