@@ -5,8 +5,6 @@ type Worker struct {
 	newHtmlDoc HtmlDocConstructor
 }
 
-type WorkerConstructor func() *Worker
-
 func NewWorker() *Worker {
 	return &Worker{fetcher: fetcher{}, newHtmlDoc: NewHtmlDoc}
 }
