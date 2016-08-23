@@ -9,12 +9,11 @@ func NewWorker() *Worker {
 	return &Worker{fetcher: fetcher{}, newHtmlDoc: NewHtmlDoc}
 }
 
-func (this Worker) Start(id int, unseenLinks <-chan string, foundLinks chan<- []string, results chan<- pageInfo) {
+func (this Worker) Start(id int, unseenLinks <-chan string, found chan<- pageInfo) {
 	for link := range unseenLinks {
 		info := this.extractPageInfo(link)
 
-		go func() { foundLinks <- info.links }()
-		go func() { results <- info }()
+		go func() { found <- info }()
 	}
 }
 
